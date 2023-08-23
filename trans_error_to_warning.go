@@ -7,21 +7,21 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type transErrorToWarnLogrusHook struct {
+type TransErrorToWarningLogrusHook struct {
 	errCodes []gocode.Code
 }
 
-func NewTransErrorToWarnLogrusHook(errCodes []gocode.Code) logrus.Hook {
-	return &transErrorToWarnLogrusHook{
+func NewTransErrorToWarningLogrusHook(errCodes []gocode.Code) logrus.Hook {
+	return &TransErrorToWarningLogrusHook{
 		errCodes: errCodes,
 	}
 }
 
-func (hook *transErrorToWarnLogrusHook) Levels() []logrus.Level {
+func (hook *TransErrorToWarningLogrusHook) Levels() []logrus.Level {
 	return []logrus.Level{logrus.ErrorLevel}
 }
 
-func (hook *transErrorToWarnLogrusHook) Fire(entry *logrus.Entry) error {
+func (hook *TransErrorToWarningLogrusHook) Fire(entry *logrus.Entry) error {
 	err, ok := entry.Data[logrus.ErrorKey].(error)
 
 	if !ok || err == nil {
