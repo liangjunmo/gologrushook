@@ -22,11 +22,20 @@ func ExampleReportCallerLogrusHook() {
 		TimestampFormat: "2006-01-02 15:04:05",
 	})
 
-	//logrus.AddHook(logrushook.NewReportCallerLogrusHook([]logrus.Level{logrus.ErrorLevel, logrus.WarnLevel}, logrushook.DefaultPathHandler))
+	//logrus.AddHook(
+	//	logrushook.NewReportCallerLogrusHook(
+	//		[]logrus.Level{logrus.ErrorLevel, logrus.WarnLevel},
+	//		logrushook.DefaultPathHandler),
+	//)
 
-	logrus.AddHook(logrushook.NewReportCallerLogrusHook([]logrus.Level{logrus.ErrorLevel, logrus.WarnLevel}, func(path string) string {
-		return strings.Replace(path, dir+"/", "", -1)
-	}))
+	logrus.AddHook(
+		logrushook.NewReportCallerLogrusHook(
+			[]logrus.Level{logrus.ErrorLevel, logrus.WarnLevel},
+			func(path string) string {
+				return strings.Replace(path, dir+"/", "", -1)
+			},
+		),
+	)
 
 	logrus.Error("error")
 }
