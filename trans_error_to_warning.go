@@ -8,12 +8,12 @@ import (
 )
 
 type TransErrorToWarningLogrusHook struct {
-	errCodes []gocode.Code
+	excludeCodes []gocode.Code
 }
 
-func NewTransErrorToWarningLogrusHook(errCodes []gocode.Code) logrus.Hook {
+func NewTransErrorToWarningLogrusHook(excludeCodes []gocode.Code) logrus.Hook {
 	return &TransErrorToWarningLogrusHook{
-		errCodes: errCodes,
+		excludeCodes: excludeCodes,
 	}
 }
 
@@ -28,7 +28,7 @@ func (hook *TransErrorToWarningLogrusHook) Fire(entry *logrus.Entry) error {
 		return nil
 	}
 
-	for _, code := range hook.errCodes {
+	for _, code := range hook.excludeCodes {
 		if errors.Is(err, code) {
 			return nil
 		}
