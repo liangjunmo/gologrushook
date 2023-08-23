@@ -19,7 +19,12 @@ func ExampleTransErrorToWarningLogrusHook() {
 		TimestampFormat: "2006-01-02 15:04:05",
 	})
 
-	logrus.AddHook(logrushook.NewTransErrorToWarningLogrusHook([]gocode.Code{ErrorCode}))
+	logrus.AddHook(
+		logrushook.NewTransErrorToWarningLogrusHook(
+			[]gocode.Code{ErrorCode},
+			true,
+		),
+	)
 
 	logrus.WithError(WarnCode).Error("warn")
 }

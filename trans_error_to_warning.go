@@ -8,12 +8,14 @@ import (
 )
 
 type TransErrorToWarningLogrusHook struct {
-	excludeCodes []gocode.Code
+	excludeCodes     []gocode.Code
+	deleteErrorField bool
 }
 
-func NewTransErrorToWarningLogrusHook(excludeCodes []gocode.Code) logrus.Hook {
+func NewTransErrorToWarningLogrusHook(excludeCodes []gocode.Code, deleteErrorField bool) logrus.Hook {
 	return &TransErrorToWarningLogrusHook{
-		excludeCodes: excludeCodes,
+		excludeCodes:     excludeCodes,
+		deleteErrorField: deleteErrorField,
 	}
 }
 
@@ -26,6 +28,10 @@ func (hook *TransErrorToWarningLogrusHook) Fire(entry *logrus.Entry) error {
 
 	if !ok || err == nil {
 		return nil
+	}
+
+	if hook.deleteErrorField {
+		delete(entry.Data, logrus.ErrorKey)
 	}
 
 	for _, code := range hook.excludeCodes {
