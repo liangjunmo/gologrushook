@@ -1,7 +1,6 @@
 package logrushook_test
 
 import (
-	"log"
 	"os"
 	"strings"
 
@@ -11,11 +10,6 @@ import (
 )
 
 func ExampleReportCallerLogrusHook() {
-	dir, err := os.Getwd()
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	logrus.SetFormatter(&logrus.TextFormatter{
 		DisableQuote:    true,
 		FullTimestamp:   true,
@@ -25,8 +19,14 @@ func ExampleReportCallerLogrusHook() {
 	//logrus.AddHook(
 	//	logrushook.NewReportCallerLogrusHook(
 	//		[]logrus.Level{logrus.ErrorLevel, logrus.WarnLevel},
-	//		logrushook.DefaultPathHandler),
+	//		logrushook.DefaultPathHandler,
+	//	),
 	//)
+
+	dir, err := os.Getwd()
+	if err != nil {
+		logrus.Fatal(err)
+	}
 
 	logrus.AddHook(
 		logrushook.NewReportCallerLogrusHook(
