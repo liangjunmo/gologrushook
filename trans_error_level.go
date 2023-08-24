@@ -7,23 +7,25 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type TransErrorToWarningLogrusHook struct {
+type TransErrorLevelLogrusHook struct {
+	toLevel          logrus.Level
 	excludeCodes     []gocode.Code
 	deleteErrorField bool
 }
 
-func NewTransErrorToWarningLogrusHook(excludeCodes []gocode.Code, deleteErrorField bool) logrus.Hook {
-	return &TransErrorToWarningLogrusHook{
+func NewTransErrorLevelLogrusHook(toLevel logrus.Level, excludeCodes []gocode.Code, deleteErrorField bool) logrus.Hook {
+	return &TransErrorLevelLogrusHook{
+		toLevel:          toLevel,
 		excludeCodes:     excludeCodes,
 		deleteErrorField: deleteErrorField,
 	}
 }
 
-func (hook *TransErrorToWarningLogrusHook) Levels() []logrus.Level {
+func (hook *TransErrorLevelLogrusHook) Levels() []logrus.Level {
 	return []logrus.Level{logrus.ErrorLevel}
 }
 
-func (hook *TransErrorToWarningLogrusHook) Fire(entry *logrus.Entry) error {
+func (hook *TransErrorLevelLogrusHook) Fire(entry *logrus.Entry) error {
 	err, ok := entry.Data[logrus.ErrorKey].(error)
 
 	if !ok || err == nil {
@@ -40,7 +42,7 @@ func (hook *TransErrorToWarningLogrusHook) Fire(entry *logrus.Entry) error {
 		}
 	}
 
-	entry.Level = logrus.WarnLevel
+	entry.Level = hook.toLevel
 
 	return nil
 }

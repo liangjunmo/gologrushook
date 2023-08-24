@@ -12,7 +12,7 @@ var (
 	WarnCode  gocode.Code = "warn"
 )
 
-func ExampleTransErrorToWarningLogrusHook() {
+func ExampleTransErrorLevelLogrusHook() {
 	logrus.SetFormatter(&logrus.TextFormatter{
 		DisableQuote:    true,
 		FullTimestamp:   true,
@@ -20,7 +20,8 @@ func ExampleTransErrorToWarningLogrusHook() {
 	})
 
 	logrus.AddHook(
-		logrushook.NewTransErrorToWarningLogrusHook(
+		logrushook.NewTransErrorLevelLogrusHook(
+			logrus.WarnLevel,
 			[]gocode.Code{ErrorCode},
 			true,
 		),
