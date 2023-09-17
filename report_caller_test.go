@@ -1,6 +1,7 @@
 package logrushook_test
 
 import (
+	"fmt"
 	"os"
 	"strings"
 
@@ -19,6 +20,7 @@ func ExampleReportCallerLogrusHook() {
 	//logrus.AddHook(
 	//	logrushook.NewReportCallerLogrusHook(
 	//		[]logrus.Level{logrus.ErrorLevel, logrus.WarnLevel},
+	//		"file",
 	//		logrushook.DefaultPathHandler,
 	//	),
 	//)
@@ -28,11 +30,14 @@ func ExampleReportCallerLogrusHook() {
 		logrus.Fatal(err)
 	}
 
+	println(dir)
+
 	logrus.AddHook(
 		logrushook.NewReportCallerLogrusHook(
 			[]logrus.Level{logrus.ErrorLevel, logrus.WarnLevel},
-			func(path string) string {
-				return strings.Replace(path, dir+"/", "", -1)
+			"file",
+			func(path string, line int) string {
+				return fmt.Sprintf("%s:%d", strings.Replace(path, dir+"/", "", -1), line)
 			},
 		),
 	)

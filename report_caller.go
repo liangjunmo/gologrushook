@@ -9,18 +9,20 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var DefaultPathHandler = func(path string) string {
-	return path
+var DefaultPathHandler = func(path string, line int) string {
+	return fmt.Sprintf("%s:%d", path, line)
 }
 
 type ReportCallerLogrusHook struct {
 	levels      []logrus.Level
-	pathHandler func(string) string
+	key         string
+	pathHandler func(string, int) string
 }
 
-func NewReportCallerLogrusHook(levels []logrus.Level, pathHandler func(string) string) *ReportCallerLogrusHook {
+func NewReportCallerLogrusHook(levels []logrus.Level, key string, pathHandler func(string, int) string) *ReportCallerLogrusHook {
 	return &ReportCallerLogrusHook{
 		levels:      levels,
+		key:         key,
 		pathHandler: pathHandler,
 	}
 }
@@ -31,7 +33,7 @@ func (hook *ReportCallerLogrusHook) Levels() []logrus.Level {
 
 func (hook *ReportCallerLogrusHook) Fire(entry *logrus.Entry) error {
 	caller := getCaller()
-	entry.Data["file"] = fmt.Sprintf("%s:%d", hook.pathHandler(caller.File), caller.Line)
+	entry.Data[hook.key] = hook.pathHandler(caller.File, caller.Line)
 	return nil
 }
 
