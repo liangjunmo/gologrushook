@@ -4,37 +4,50 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"testing"
 
 	"github.com/sirupsen/logrus"
 
 	"github.com/liangjunmo/logrushook"
 )
 
-func ExampleReportCallerLogrusHook() {
-	logrus.SetFormatter(&logrus.TextFormatter{
+func TestReportCallerLogrusHookWithDefaultPathHandler(t *testing.T) {
+	log := logrus.New()
+
+	log.SetFormatter(&logrus.TextFormatter{
 		DisableQuote:    true,
 		FullTimestamp:   true,
 		TimestampFormat: "2006-01-02 15:04:05",
 	})
 
-	//logrus.AddHook(
-	//	logrushook.NewReportCallerLogrusHook(
-	//		[]logrus.Level{logrus.ErrorLevel, logrus.WarnLevel},
-	//		"file",
-	//		logrushook.DefaultPathHandler,
-	//	),
-	//)
+	log.AddHook(
+		logrushook.NewReportCallerLogrusHook(
+			[]logrus.Level{logrus.ErrorLevel},
+			"file",
+			logrushook.DefaultPathHandler,
+		),
+	)
+
+	log.Error("error message")
+}
+
+func TestReportCallerLogrusHookWithCustomPathHandler(t *testing.T) {
+	log := logrus.New()
+
+	log.SetFormatter(&logrus.TextFormatter{
+		DisableQuote:    true,
+		FullTimestamp:   true,
+		TimestampFormat: "2006-01-02 15:04:05",
+	})
 
 	dir, err := os.Getwd()
 	if err != nil {
-		logrus.Fatal(err)
+		t.Fatal(err)
 	}
 
-	println(dir)
-
-	logrus.AddHook(
+	log.AddHook(
 		logrushook.NewReportCallerLogrusHook(
-			[]logrus.Level{logrus.ErrorLevel, logrus.WarnLevel},
+			[]logrus.Level{logrus.ErrorLevel},
 			"file",
 			func(path string, line int) string {
 				return fmt.Sprintf("%s:%d", strings.Replace(path, dir+"/", "", -1), line)
@@ -42,5 +55,5 @@ func ExampleReportCallerLogrusHook() {
 		),
 	)
 
-	logrus.Error("error")
+	log.Error("error message")
 }
