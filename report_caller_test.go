@@ -28,7 +28,7 @@ func TestReportCallerLogrusHookWithDefaultPathHandler(t *testing.T) {
 		),
 	)
 
-	log.Error("error message")
+	log.Error("TestReportCallerLogrusHookWithDefaultPathHandler")
 }
 
 func TestReportCallerLogrusHookWithCustomPathHandler(t *testing.T) {
@@ -55,5 +55,5 @@ func TestReportCallerLogrusHookWithCustomPathHandler(t *testing.T) {
 		),
 	)
 
-	log.Error("error message")
+	log.Error("TestReportCallerLogrusHookWithCustomPathHandler")
 }

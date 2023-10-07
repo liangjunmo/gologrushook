@@ -22,12 +22,13 @@ func TestTransformErrorLevelLogrusHookWithoutExcludeCodes(t *testing.T) {
 		logrushook.NewTransformErrorLevelLogrusHook(
 			logrus.WarnLevel,
 			nil,
-			true,
+			true, // delete err key
 		),
 	)
 
-	var errorCode gocode.Code = "Error"
-	log.WithError(errorCode).Error("transform to warn level")
+	var notFoundCode gocode.Code = "NotFound"
+
+	log.WithError(notFoundCode).Error("TestTransformErrorLevelLogrusHookWithoutExcludeCodes") // transform to warn level
 }
 
 func TestTransformErrorLevelLogrusHookWithExcludeCodes(t *testing.T) {
@@ -39,15 +40,15 @@ func TestTransformErrorLevelLogrusHookWithExcludeCodes(t *testing.T) {
 		TimestampFormat: "2006-01-02 15:04:05",
 	})
 
-	var errorCode gocode.Code = "Error"
+	var notFoundCode gocode.Code = "NotFound"
 
 	log.AddHook(
 		logrushook.NewTransformErrorLevelLogrusHook(
 			logrus.WarnLevel,
-			[]gocode.Code{errorCode},
-			false,
+			[]gocode.Code{notFoundCode},
+			false, // not delete err key
 		),
 	)
 
-	log.WithError(errorCode).Error("not transform to warn level")
+	log.WithError(notFoundCode).Error("TestTransformErrorLevelLogrusHookWithExcludeCodes") // not transform to warn level
 }

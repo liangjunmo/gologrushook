@@ -13,11 +13,11 @@ type TransformErrorLevelLogrusHook struct {
 	deleteErrorKey bool
 }
 
-func NewTransformErrorLevelLogrusHook(toLevel logrus.Level, excludeCodes []gocode.Code, deleteErrorField bool) logrus.Hook {
+func NewTransformErrorLevelLogrusHook(toLevel logrus.Level, excludeCodes []gocode.Code, deleteErrorKey bool) logrus.Hook {
 	return &TransformErrorLevelLogrusHook{
 		toLevel:        toLevel,
 		excludeCodes:   excludeCodes,
-		deleteErrorKey: deleteErrorField,
+		deleteErrorKey: deleteErrorKey,
 	}
 }
 
