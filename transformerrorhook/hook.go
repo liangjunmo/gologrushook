@@ -1,4 +1,4 @@
-package logrushook
+package transformerrorhook
 
 import (
 	"errors"
@@ -7,25 +7,31 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type TransformErrorLevelLogrusHook struct {
+type Hook struct {
 	toLevel        logrus.Level
 	excludeCodes   []gocode.Code
 	deleteErrorKey bool
 }
 
-func NewTransformErrorLevelLogrusHook(toLevel logrus.Level, excludeCodes []gocode.Code, deleteErrorKey bool) logrus.Hook {
-	return &TransformErrorLevelLogrusHook{
-		toLevel:        toLevel,
-		excludeCodes:   excludeCodes,
-		deleteErrorKey: deleteErrorKey,
+func New(toLevel logrus.Level) *Hook {
+	return &Hook{
+		toLevel: toLevel,
 	}
 }
 
-func (hook *TransformErrorLevelLogrusHook) Levels() []logrus.Level {
+func (hook *Hook) ExcludeCodes(codes []gocode.Code) {
+	hook.excludeCodes = codes
+}
+
+func (hook *Hook) DeleteErrorKey() {
+	hook.deleteErrorKey = true
+}
+
+func (hook *Hook) Levels() []logrus.Level {
 	return []logrus.Level{logrus.ErrorLevel}
 }
 
-func (hook *TransformErrorLevelLogrusHook) Fire(entry *logrus.Entry) error {
+func (hook *Hook) Fire(entry *logrus.Entry) error {
 	err, ok := entry.Data[logrus.ErrorKey].(error)
 	if !ok || err == nil {
 		return nil

@@ -1,4 +1,4 @@
-package logrushook
+package reportcallerhook
 
 import (
 	"fmt"
@@ -9,31 +9,37 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var DefaultPathHandler = func(path string, line int) string {
-	return fmt.Sprintf("%s:%d", path, line)
+type Hook struct {
+	levels          []logrus.Level
+	key             string
+	locationHandler func(string, int) string
 }
 
-type ReportCallerLogrusHook struct {
-	levels      []logrus.Level
-	key         string
-	pathHandler func(string, int) string
-}
-
-func NewReportCallerLogrusHook(levels []logrus.Level, key string, pathHandler func(string, int) string) *ReportCallerLogrusHook {
-	return &ReportCallerLogrusHook{
-		levels:      levels,
-		key:         key,
-		pathHandler: pathHandler,
+func New(levels []logrus.Level) *Hook {
+	return &Hook{
+		levels: levels,
+		key:    "file",
+		locationHandler: func(path string, line int) string {
+			return fmt.Sprintf("%s:%d", path, line)
+		},
 	}
 }
 
-func (hook *ReportCallerLogrusHook) Levels() []logrus.Level {
+func (hook *Hook) SetKey(key string) {
+	hook.key = key
+}
+
+func (hook *Hook) SetLocationHandler(handler func(path string, line int) string) {
+	hook.locationHandler = handler
+}
+
+func (hook *Hook) Levels() []logrus.Level {
 	return hook.levels
 }
 
-func (hook *ReportCallerLogrusHook) Fire(entry *logrus.Entry) error {
+func (hook *Hook) Fire(entry *logrus.Entry) error {
 	caller := getCaller()
-	entry.Data[hook.key] = hook.pathHandler(caller.File, caller.Line)
+	entry.Data[hook.key] = hook.locationHandler(caller.File, caller.Line)
 	return nil
 }
 
