@@ -1,25 +1,23 @@
-package reportcallerhook_test
+package reportcallerhook
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strings"
-	"testing"
 
 	"github.com/sirupsen/logrus"
-
-	"github.com/liangjunmo/logrushook/reportcallerhook"
 )
 
-func TestHook(t *testing.T) {
+func Example() {
 	dir, err := os.Getwd()
 	if err != nil {
-		t.Fatal(err)
+		log.Fatal(err)
 	}
 
-	hook := reportcallerhook.New([]logrus.Level{logrus.ErrorLevel})
+	hook := New([]logrus.Level{logrus.ErrorLevel})
 
-	hook.SetKey("file")
+	hook.SetKey("location")
 
 	hook.SetLocationHandler(func(path string, line int) string {
 		return fmt.Sprintf("%s:%d", strings.Replace(path, dir+"/", "", -1), line)
@@ -35,5 +33,5 @@ func TestHook(t *testing.T) {
 
 	log.AddHook(hook)
 
-	log.Error("test")
+	log.Error("message")
 }

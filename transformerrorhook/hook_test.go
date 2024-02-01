@@ -1,23 +1,20 @@
-package transformerrorhook_test
+package transformerrorhook
 
 import (
-	"testing"
-
 	"github.com/liangjunmo/gocode"
 	"github.com/sirupsen/logrus"
-
-	"github.com/liangjunmo/logrushook/transformerrorhook"
 )
 
-func TestHook(t *testing.T) {
+func Example() {
 	var (
-		internalServerErrorCode gocode.Code = "InternalServerError"
 		notFoundCode            gocode.Code = "NotFound"
+		internalServerErrorCode gocode.Code = "InternalServerError"
 	)
 
-	hook := transformerrorhook.New(logrus.WarnLevel)
+	hook := New(logrus.WarnLevel)
 
-	hook.ExcludeCodes([]gocode.Code{internalServerErrorCode})
+	hook.ExcludedCodes([]gocode.Code{internalServerErrorCode})
+
 	hook.DeleteErrorKey()
 
 	log := logrus.New()
@@ -30,6 +27,6 @@ func TestHook(t *testing.T) {
 
 	log.AddHook(hook)
 
-	log.WithError(internalServerErrorCode).Error(internalServerErrorCode)
-	log.WithError(notFoundCode).Error(notFoundCode)
+	log.WithError(notFoundCode).Error(notFoundCode)                       // WarnLevel
+	log.WithError(internalServerErrorCode).Error(internalServerErrorCode) // ErrorLevel
 }

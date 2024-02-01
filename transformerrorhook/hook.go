@@ -9,7 +9,7 @@ import (
 
 type Hook struct {
 	toLevel        logrus.Level
-	excludeCodes   []gocode.Code
+	excludedCodes  []gocode.Code
 	deleteErrorKey bool
 }
 
@@ -19,8 +19,8 @@ func New(toLevel logrus.Level) *Hook {
 	}
 }
 
-func (hook *Hook) ExcludeCodes(codes []gocode.Code) {
-	hook.excludeCodes = codes
+func (hook *Hook) ExcludedCodes(codes []gocode.Code) {
+	hook.excludedCodes = codes
 }
 
 func (hook *Hook) DeleteErrorKey() {
@@ -41,7 +41,7 @@ func (hook *Hook) Fire(entry *logrus.Entry) error {
 		delete(entry.Data, logrus.ErrorKey)
 	}
 
-	for _, code := range hook.excludeCodes {
+	for _, code := range hook.excludedCodes {
 		if errors.Is(err, code) {
 			return nil
 		}
