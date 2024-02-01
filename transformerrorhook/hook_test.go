@@ -15,7 +15,7 @@ func Example() {
 
 	hook.DeleteErrorKey()
 
-	hook.ExcludedCodes([]gocode.Code{internalServerErrorCode})
+	hook.SetExcludedCodes([]gocode.Code{internalServerErrorCode})
 
 	log := logrus.New()
 

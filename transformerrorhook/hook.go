@@ -23,7 +23,7 @@ func (hook *Hook) DeleteErrorKey() {
 	hook.deleteErrorKey = true
 }
 
-func (hook *Hook) ExcludedCodes(codes []gocode.Code) {
+func (hook *Hook) SetExcludedCodes(codes []gocode.Code) {
 	hook.excludedCodes = codes
 }
 
