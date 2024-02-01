@@ -13,9 +13,9 @@ func Example() {
 
 	hook := New(logrus.WarnLevel)
 
-	hook.ExcludedCodes([]gocode.Code{internalServerErrorCode})
-
 	hook.DeleteErrorKey()
+
+	hook.ExcludedCodes([]gocode.Code{internalServerErrorCode})
 
 	log := logrus.New()
 
