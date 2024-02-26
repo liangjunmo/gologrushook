@@ -1,4 +1,4 @@
-package reportcallerhook
+package report_caller_hook
 
 import (
 	"fmt"

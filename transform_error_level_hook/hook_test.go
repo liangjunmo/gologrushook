@@ -1,14 +1,16 @@
-package transformerrorhook
+package transform_error_level_hook
 
 import (
+	"fmt"
+
 	"github.com/liangjunmo/gocode"
 	"github.com/sirupsen/logrus"
 )
 
 func Example() {
 	var (
-		notFoundCode            gocode.Code = "NotFound"
 		internalServerErrorCode gocode.Code = "InternalServerError"
+		notFoundCode            gocode.Code = "NotFound"
 	)
 
 	hook := New(logrus.WarnLevel)
@@ -27,6 +29,10 @@ func Example() {
 
 	log.AddHook(hook)
 
-	log.WithError(notFoundCode).Error(notFoundCode)                       // WarnLevel
+	err := fmt.Errorf("err")
+	log.WithError(err).Error(err) // ErrorLevel
+
 	log.WithError(internalServerErrorCode).Error(internalServerErrorCode) // ErrorLevel
+
+	log.WithError(notFoundCode).Error(notFoundCode) // WarnLevel
 }

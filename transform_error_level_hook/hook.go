@@ -1,4 +1,4 @@
-package transformerrorhook
+package transform_error_level_hook
 
 import (
 	"errors"
@@ -41,7 +41,13 @@ func (hook *Hook) Fire(entry *logrus.Entry) error {
 		delete(entry.Data, logrus.ErrorKey)
 	}
 
-	for _, code := range hook.excludedCodes {
+	var code gocode.Code
+
+	if !errors.As(err, &code) {
+		return nil
+	}
+
+	for _, code = range hook.excludedCodes {
 		if errors.Is(err, code) {
 			return nil
 		}
