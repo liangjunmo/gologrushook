@@ -1,37 +1,49 @@
 package report_caller_hook
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 	"strings"
+	"testing"
 
 	"github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/require"
 )
 
-func Example() {
+func TestHook(t *testing.T) {
 	dir, err := os.Getwd()
-	if err != nil {
-		log.Fatal(err)
-	}
+	require.Nil(t, err)
 
-	hook := New([]logrus.Level{logrus.ErrorLevel})
+	var (
+		field    = "location"
+		location string
+		buffer   bytes.Buffer
+		fields   logrus.Fields
+	)
 
-	hook.SetKey("location")
+	hook := New([]logrus.Level{logrus.ErrorLevel}, field)
 
-	hook.SetLocationHandler(func(path string, line int) string {
-		return fmt.Sprintf("%s:%d", strings.Replace(path, dir+"/", "", -1), line)
+	hook.SetLocationHandler(func(fileAbsolutePath string, line int) string {
+		location = fmt.Sprintf(
+			"%s:%d",
+			strings.Replace(fileAbsolutePath, dir+"/", "", -1),
+			line,
+		)
+		return location
 	})
 
 	log := logrus.New()
 
-	log.SetFormatter(&logrus.TextFormatter{
-		DisableQuote:    true,
-		FullTimestamp:   true,
-		TimestampFormat: "2006-01-02 15:04:05",
-	})
+	log.SetFormatter(&logrus.JSONFormatter{})
+	log.SetOutput(&buffer)
 
 	log.AddHook(hook)
 
 	log.Error("message")
+
+	err = json.Unmarshal(buffer.Bytes(), &fields)
+	require.Nil(t, err)
+	require.Equal(t, location, fields[field])
 }

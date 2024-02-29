@@ -9,26 +9,24 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type LocationHandler func(path string, line int) string
+type LocationHandler func(fileAbsolutePath string, line int) string
+
+var defaultLocationHandler LocationHandler = func(fileAbsolutePath string, line int) string {
+	return fmt.Sprintf("%s:%d", fileAbsolutePath, line)
+}
 
 type Hook struct {
 	levels          []logrus.Level
-	key             string
+	field           string
 	locationHandler LocationHandler
 }
 
-func New(levels []logrus.Level) *Hook {
+func New(levels []logrus.Level, field string) *Hook {
 	return &Hook{
-		levels: levels,
-		key:    "file",
-		locationHandler: func(path string, line int) string {
-			return fmt.Sprintf("%s:%d", path, line)
-		},
+		levels:          levels,
+		field:           field,
+		locationHandler: defaultLocationHandler,
 	}
-}
-
-func (hook *Hook) SetKey(key string) {
-	hook.key = key
 }
 
 func (hook *Hook) SetLocationHandler(handler LocationHandler) {
@@ -42,7 +40,7 @@ func (hook *Hook) Levels() []logrus.Level {
 func (hook *Hook) Fire(entry *logrus.Entry) error {
 	caller := getCaller()
 
-	entry.Data[hook.key] = hook.locationHandler(caller.File, caller.Line)
+	entry.Data[hook.field] = hook.locationHandler(caller.File, caller.Line)
 
 	return nil
 }
