@@ -17,14 +17,14 @@ var defaultLocationHandler LocationHandler = func(fileAbsolutePath string, line 
 
 type Hook struct {
 	levels          []logrus.Level
-	field           string
+	fieldKey        string
 	locationHandler LocationHandler
 }
 
-func New(levels []logrus.Level, field string) *Hook {
+func New(levels []logrus.Level, fieldKey string) *Hook {
 	return &Hook{
 		levels:          levels,
-		field:           field,
+		fieldKey:        fieldKey,
 		locationHandler: defaultLocationHandler,
 	}
 }
@@ -40,7 +40,7 @@ func (hook *Hook) Levels() []logrus.Level {
 func (hook *Hook) Fire(entry *logrus.Entry) error {
 	caller := getCaller()
 
-	entry.Data[hook.field] = hook.locationHandler(caller.File, caller.Line)
+	entry.Data[hook.fieldKey] = hook.locationHandler(caller.File, caller.Line)
 
 	return nil
 }

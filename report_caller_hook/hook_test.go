@@ -17,13 +17,13 @@ func TestHook(t *testing.T) {
 	require.Nil(t, err)
 
 	var (
-		field    = "location"
+		fieldKey = "location"
 		location string
 		buffer   bytes.Buffer
 		fields   logrus.Fields
 	)
 
-	hook := New([]logrus.Level{logrus.ErrorLevel}, field)
+	hook := New([]logrus.Level{logrus.ErrorLevel}, fieldKey)
 
 	hook.SetLocationHandler(func(fileAbsolutePath string, line int) string {
 		location = fmt.Sprintf(
@@ -45,5 +45,5 @@ func TestHook(t *testing.T) {
 
 	err = json.Unmarshal(buffer.Bytes(), &fields)
 	require.Nil(t, err)
-	require.Equal(t, location, fields[field])
+	require.Equal(t, location, fields[fieldKey])
 }
