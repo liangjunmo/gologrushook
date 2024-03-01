@@ -3,9 +3,6 @@ package report_caller_hook
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
-	"os"
-	"strings"
 	"testing"
 
 	"github.com/sirupsen/logrus"
@@ -13,12 +10,9 @@ import (
 )
 
 func TestHook(t *testing.T) {
-	dir, err := os.Getwd()
-	require.Nil(t, err)
-
 	var (
 		fieldKey = "location"
-		location string
+		location = "path:line"
 		buffer   bytes.Buffer
 		fields   logrus.Fields
 	)
@@ -26,11 +20,6 @@ func TestHook(t *testing.T) {
 	hook := New([]logrus.Level{logrus.ErrorLevel}, fieldKey)
 
 	hook.SetLocationHandler(func(fileAbsolutePath string, line int) string {
-		location = fmt.Sprintf(
-			"%s:%d",
-			strings.Replace(fileAbsolutePath, dir+"/", "", -1),
-			line,
-		)
 		return location
 	})
 
@@ -43,7 +32,7 @@ func TestHook(t *testing.T) {
 
 	log.Error("message")
 
-	err = json.Unmarshal(buffer.Bytes(), &fields)
+	err := json.Unmarshal(buffer.Bytes(), &fields)
 	require.Nil(t, err)
 	require.Equal(t, location, fields[fieldKey])
 }
