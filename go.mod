@@ -1,4 +1,4 @@
-module github.com/liangjunmo/logrushook
+module github.com/liangjunmo/gologrushook
 
 go 1.19
 
